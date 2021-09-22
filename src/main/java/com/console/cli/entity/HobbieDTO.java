@@ -11,6 +11,6 @@ import java.util.List;
 public class HobbieDTO implements Serializable {
 
     @Getter @Setter
-    private List<String> nameHobbie;
+    private String nameHobbie;
 
 }
