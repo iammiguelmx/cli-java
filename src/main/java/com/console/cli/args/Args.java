@@ -2,15 +2,12 @@ package com.console.cli.args;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.console.cli.entity.HobbieDTO;
 import com.console.cli.validator.DateValidator;
+import com.console.cli.validator.PositiveInteger;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@Parameters(separators = "=") //space works too
+@Parameters(separators = "=")
 public class Args {
 
     @Parameter(names = {"-d", "-date"},
@@ -20,9 +17,17 @@ public class Args {
     @Getter @Setter
     private String date;
 
-    @Parameter(names = {"-u", "-user"},
-            description = "User to register")
+    @Parameter(names = {"-age", "-a"},
+             validateWith = PositiveInteger.class,
+             description = "Age Positive value")
     @Getter @Setter
-    private List<HobbieDTO> hobbieDTOList = new ArrayList<>();
+    private Integer age;
+
+    @Parameter(names = {"-h", "--help"},
+            help = true,
+            description = "Displays help information")
+    @Getter @Setter
+    private boolean help;
+
 
 }

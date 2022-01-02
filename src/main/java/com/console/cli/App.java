@@ -3,59 +3,42 @@ package com.console.cli;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import com.console.cli.args.Args;
-import com.console.cli.entity.HobbieDTO;
-import com.console.cli.service.IHobbieService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.log4j.Log4j2;
 
-import java.util.List;
-
-//Main principal
+@Log4j2
 public class App {
 
-	@Autowired
-	private static IHobbieService iHobbieService;
-
-	public App(IHobbieService iHobbieService) {
-		this.iHobbieService = iHobbieService;
-	}
+	final Args mainArgs = new Args();
 
 	public static void main(String[] args) {
-		App app = new App(iHobbieService);
+		App main = new App();
+		//Args to read. (Example)
+		args = new String[]{"-date=2020-11-24", "-age=23"};
+		main.handleInputArgs(args);
+	}
 
-		//Args to read.
-		args = new String[]{"-d=2020-11-24","-user=study,read,sleep"};
-
-		//Define args
-		Args arguments = new Args();
-		JCommander jcommander = JCommander.newBuilder().addObject(arguments).build();
-
+	void handleInputArgs(String args[]) {
+		JCommander jCommander = new JCommander(mainArgs);
 		try {
-			//Parse args
-			jcommander.parse(args);
-
-			//Get values from args.
-			List<Object> objects = jcommander.getObjects();
-
-			//TODO: Make Generic
-			for (Object object : objects) {
-				if (object instanceof Args){
-					Object fieldValue = ((Args) object).getDate();
-					List<HobbieDTO> secondValue =  ((Args) object).getHobbieDTOList();
-					//Register service
-					System.out.println(secondValue.size());
-					try {
-						int register = iHobbieService.register(secondValue);
-					}catch (Exception e){
-						System.out.println(e.getMessage());
-					}
-
-				}
-			}
-		} catch (ParameterException e) {
-			//Show how usage
-			jcommander.usage();
+			log.info("Parse args: " + args.toString());
+			jCommander.parse(args);
+			makeProcess();
+		} catch (ParameterException exception) {
+			log.error("Error: " + exception.getMessage() );
+			showUsage(jCommander);
 		}
 	}
 
+	void showUsage(JCommander jCommander) {
+		log.info("Show info");
+		jCommander.usage();
+		System.exit(0);
+	}
+
+	void makeProcess(){
+		log.info(mainArgs.getAge());
+		log.info(mainArgs.getDate());
+		log.info(mainArgs.isHelp());
+	}
 
 }
